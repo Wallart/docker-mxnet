@@ -6,28 +6,29 @@ WORKDIR /tmp
 
 # Add CUDA repository
 RUN apt-get update && apt-get install -y --no-install-recommends gnupg2 curl ca-certificates && \
-    curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1710/x86_64/7fa2af80.pub | apt-key add - && \
-    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1710/x86_64 /" > /etc/apt/sources.list.d/cuda.list && \
-    echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list && \
+    curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub | apt-key add - && \
+    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list && \
+    echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list && \
     apt-get purge --autoremove -y curl && \
     rm -rf /var/lib/apt/lists/*
 
 # Install CUDA
-ENV CUDA_VERSION 9.2.148
-ENV CUDA_PKG_VERSION 9-2=$CUDA_VERSION-1
+ENV CUDA_VERSION 10.0.130
+ENV CUDA_PKG_VERSION 10-0=$CUDA_VERSION-1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        cuda-cudart-$CUDA_PKG_VERSION && \
-    ln -s cuda-9.2 /usr/local/cuda && \
+        cuda-cudart-$CUDA_PKG_VERSION \
+        cuda-compat-10-0=410.48-1 && \
+    ln -s cuda-10.0 /usr/local/cuda && \
     rm -rf /var/lib/apt/lists/*
 
 # Install NCCL and CUDA libs
-ENV NCCL_VERSION 2.2.13
+ENV NCCL_VERSION 2.3.7
 # Runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-libraries-$CUDA_PKG_VERSION \
         cuda-nvtx-$CUDA_PKG_VERSION \
-        libnccl2=$NCCL_VERSION-1+cuda9.2 && \
+        libnccl2=$NCCL_VERSION-1+cuda10.0 && \
     apt-mark hold libnccl2 && \
     rm -rf /var/lib/apt/lists/*
 # Devel
@@ -36,20 +37,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-nvml-dev-$CUDA_PKG_VERSION \
         cuda-minimal-build-$CUDA_PKG_VERSION \
         cuda-command-line-tools-$CUDA_PKG_VERSION \
-        libnccl-dev=$NCCL_VERSION-1+cuda9.2 && \
+        libnccl-dev=$NCCL_VERSION-1+cuda10.0 && \
     rm -rf /var/lib/apt/lists/*
 
 # Install CUDNN
-ENV CUDNN_VERSION 7.1.4.18
+ENV CUDNN_VERSION 7.4.1.5
 # Runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
-            libcudnn7=$CUDNN_VERSION-1+cuda9.2 && \
+            libcudnn7=$CUDNN_VERSION-1+cuda10.0 && \
     apt-mark hold libcudnn7 && \
     rm -rf /var/lib/apt/lists/*
 # Devel
 RUN apt-get update && apt-get install -y --no-install-recommends \
-            libcudnn7=$CUDNN_VERSION-1+cuda9.2 \
-            libcudnn7-dev=$CUDNN_VERSION-1+cuda9.2 && \
+            libcudnn7=$CUDNN_VERSION-1+cuda10.0 \
+            libcudnn7-dev=$CUDNN_VERSION-1+cuda10.0 && \
     apt-mark hold libcudnn7 && \
     rm -rf /var/lib/apt/lists/*
 
