@@ -74,7 +74,7 @@ ENABLE_CUDA_RTC = 1
 USE_CUDNN = 1
 
 #whether to use NCCL library
-USE_NCCL = 0
+USE_NCCL = 1
 #add the path to NCCL library
 USE_NCCL_PATH = NONE
 
