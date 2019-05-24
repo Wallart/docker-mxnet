@@ -13,22 +13,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends gnupg2 curl ca-
     rm -rf /var/lib/apt/lists/*
 
 # Install CUDA
-ENV CUDA_VERSION 10.0.130
-ENV CUDA_PKG_VERSION 10-0=$CUDA_VERSION-1
+ENV CUDA_VERSION 10.1.168
+ENV CUDA_PKG_VERSION 10-1=$CUDA_VERSION-1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-cudart-$CUDA_PKG_VERSION \
-        cuda-compat-10-0=410.48-1 && \
-    ln -s cuda-10.0 /usr/local/cuda && \
+        cuda-compat-10-1 && \
+    ln -s cuda-10.1 /usr/local/cuda && \
     rm -rf /var/lib/apt/lists/*
 
 # Install NCCL and CUDA libs
-ENV NCCL_VERSION 2.3.7
+ENV NCCL_VERSION 2.4.2
 # Runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-libraries-$CUDA_PKG_VERSION \
         cuda-nvtx-$CUDA_PKG_VERSION \
-        libnccl2=$NCCL_VERSION-1+cuda10.0 && \
+        libnccl2=$NCCL_VERSION-1+cuda10.1 && \
     apt-mark hold libnccl2 && \
     rm -rf /var/lib/apt/lists/*
 # Devel
@@ -37,20 +37,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-nvml-dev-$CUDA_PKG_VERSION \
         cuda-minimal-build-$CUDA_PKG_VERSION \
         cuda-command-line-tools-$CUDA_PKG_VERSION \
-        libnccl-dev=$NCCL_VERSION-1+cuda10.0 && \
+        libnccl-dev=$NCCL_VERSION-1+cuda10.1 && \
     rm -rf /var/lib/apt/lists/*
 
 # Install CUDNN
-ENV CUDNN_VERSION 7.4.1.5
+ENV CUDNN_VERSION 7.5.1.10
 # Runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
-            libcudnn7=$CUDNN_VERSION-1+cuda10.0 && \
+            libcudnn7=$CUDNN_VERSION-1+cuda10.1 \
+            libcudnn7-dev=$CUDNN_VERSION-1+cuda10.1 && \
     apt-mark hold libcudnn7 && \
     rm -rf /var/lib/apt/lists/*
 # Devel
 RUN apt-get update && apt-get install -y --no-install-recommends \
-            libcudnn7=$CUDNN_VERSION-1+cuda10.0 \
-            libcudnn7-dev=$CUDNN_VERSION-1+cuda10.0 && \
+            libcudnn7=$CUDNN_VERSION-1+cuda10.1 \
+            libcudnn7-dev=$CUDNN_VERSION-1+cuda10.1 && \
     apt-mark hold libcudnn7 && \
     rm -rf /var/lib/apt/lists/*
 
