@@ -4,8 +4,8 @@ LABEL Author='Julien WALLART'
 
 WORKDIR /tmp
 
-ENV MXNET_VERSION 1.4.0
-ENV OPENCV_VERSION 3.4.2
+ENV MXNET_VERSION 1.4.1
+ENV OPENCV_VERSION 3.4.6
 
 # Download frameworks
 RUN git clone --recursive -b ${MXNET_VERSION} https://github.com/apache/incubator-mxnet mxnet-${MXNET_VERSION}
