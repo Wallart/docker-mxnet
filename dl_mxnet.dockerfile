@@ -4,8 +4,8 @@ LABEL Author='Julien WALLART'
 
 WORKDIR /tmp
 
-ENV MXNET_VERSION 1.4.1
-ENV OPENCV_VERSION 3.4.6
+ENV MXNET_VERSION 1.5.0
+ENV OPENCV_VERSION 4.1.1
 
 # Download frameworks
 RUN git clone --recursive -b ${MXNET_VERSION} https://github.com/apache/incubator-mxnet mxnet-${MXNET_VERSION}
@@ -30,12 +30,10 @@ RUN cd opencv-${OPENCV_VERSION}; mkdir build; cd build; cmake -D CMAKE_BUILD_TYP
 -D MKL_ROOT_DIR=/opt/miniconda3/envs/intelmkl \
 -D BUILD_EXAMPLES=OFF \
 -D BUILD_TESTS=OFF \
+-D OPENCV_GENERATE_PKGCONFIG=YES \
 -D BUILD_opencv_dnn=OFF \
 -D BUILD_opencv_legacy=OFF \
--D BUILD_opencv_python2=ON \
--D PYTHON2_EXECUTABLE=/opt/miniconda3/envs/intelpython2/bin/python \
--D PYTHON2_PACKAGES_PATH=/opt/miniconda3/envs/intelpython2/lib/python2.7/site-packages \
--D PYTHON2_LIBRARY=/opt/miniconda3/envs/intelpython2/lib/libpython2.7.so \
+-D BUILD_opencv_python2=OFF \
 -D BUILD_opencv_python3=ON \
 -D PYTHON3_EXECUTABLE=/opt/miniconda3/envs/intelpython3/bin/python \
 -D PYTHON3_PACKAGES_PATH=/opt/miniconda3/envs/intelpython3/lib/python3.6/site-packages \
@@ -45,7 +43,7 @@ RUN cd opencv-${OPENCV_VERSION}; mkdir build; cd build; cmake -D CMAKE_BUILD_TYP
 RUN cd opencv-${OPENCV_VERSION}/build; make -j$(nproc); make install; rm -rf /tmp/opencv-${OPENCV_VERSION}
 
 # MXNet deps
-RUN apt install -y gcc-6 g++-6
+RUN apt install -y libopenblas-dev liblapack-dev gfortran
 
 # Symlink Intel MKL env to trick MXNet
 RUN mkdir -p /opt/intel/mkl/lib
@@ -66,16 +64,14 @@ ENV LD_LIBRARY_PATH /opt/miniconda3/envs/intelmkl-dnn/lib:${LD_LIBRARY_PATH}
 RUN echo "LD_LIBRARY_PATH=/opt/miniconda3/envs/intelmkl-dnn/lib:${LD_LIBRARY_PATH}" >> /etc/environment
 
 # Install MXNet
-RUN source /opt/miniconda3/bin/activate intelpython2; \
-    pip install --upgrade pip; \
-    pip uninstall --yes mxnet; \
-    cd mxnet-${MXNET_VERSION}/python; \
-    python setup.py install 2>&1 > /tmp/intelpython2-mxnet.log || echo 'Cannot downgrade numpy'
 RUN source /opt/miniconda3/bin/activate intelpython3; \
     pip install --upgrade pip; \
     pip uninstall --yes mxnet; \
     cd mxnet-${MXNET_VERSION}/python; \
     python setup.py install 2>&1 > /tmp/intelpython3-mxnet.log || echo 'Cannot downgrade numpy'
+
+RUN source /opt/miniconda3/bin/activate intelpython3; \
+    pip install mxboard tensorflow matplotlib pandas pillow
 
 # Runit startup
 COPY bootstrap.sh /usr/sbin/bootstrap
