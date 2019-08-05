@@ -62,9 +62,8 @@ RUN chmod +x Miniconda3-latest-Linux-x86_64.sh && ./Miniconda3-latest-Linux-x86_
 RUN yes y | /opt/miniconda3/bin/conda update conda; /opt/miniconda3/bin/conda config --add channels intel
 # Install Intel MKL in a closed environment
 RUN /opt/miniconda3/bin/conda create -n intelmkl mkl-static
-# Create two intel python environments
+# Create an intel python3 environment
 RUN /opt/miniconda3/bin/conda create -n intelpython3 intelpython3_core python=3
-RUN /opt/miniconda3/bin/conda create -n intelpython2 intelpython2_core python=2
 
 # Prepare env variables for all users
 # Docker interactive mode
@@ -75,6 +74,9 @@ ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs
 RUN echo "export PATH=/opt/miniconda3/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}" >> /etc/bash.bashrc
 RUN echo "LD_LIBRARY_PATH=/usr/local/nvidia/lib64:/usr/local/cuda/lib64" >> /etc/environment
 RUN echo "LIBRARY_PATH=/usr/local/cuda/lib64/stubs" >> /etc/environment
+
+# Intel Python 3 auto sourcing
+RUN echo "source activate intelpython3" >> /etc/bash.bashrc
 
 WORKDIR /
 ENTRYPOINT ["/usr/sbin/bootstrap"]
