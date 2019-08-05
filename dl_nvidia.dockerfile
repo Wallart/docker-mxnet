@@ -55,13 +55,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-mark hold libcudnn7 && \
     rm -rf /var/lib/apt/lists/*
 
+# Install Intel MKL
+ENV MKL_VERSION 2019.4-070
+RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \
+    wget https://apt.repos.intel.com/setup/intelproducts.list -O /etc/apt/sources.list.d/intelproducts.list && \
+    apt update && apt install -y intel-mkl-$MKL_VERSION
+
 # Install miniconda
 RUN wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 RUN chmod +x Miniconda3-latest-Linux-x86_64.sh && ./Miniconda3-latest-Linux-x86_64.sh -b -p /opt/miniconda3 && rm -rf ./Miniconda3-latest-Linux-x86_64.sh
 
 RUN yes y | /opt/miniconda3/bin/conda update conda; /opt/miniconda3/bin/conda config --add channels intel
-# Install Intel MKL in a closed environment
-RUN /opt/miniconda3/bin/conda create -n intelmkl mkl-static
+
 # Create an intel python3 environment
 RUN /opt/miniconda3/bin/conda create -n intelpython3 intelpython3_core python=3
 
