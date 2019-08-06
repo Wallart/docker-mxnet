@@ -27,7 +27,7 @@ RUN cd opencv-${OPENCV_VERSION}; mkdir build; cd build; cmake -D CMAKE_BUILD_TYP
 -D WITH_GDAL=OFF \
 -D WITH_XINE=ON \
 -D WITH_MKL=ON \
--D MKL_ROOT_DIR=/opt/miniconda3/envs/intelmkl \
+-D MKL_ROOT_DIR=/opt/intel/mkl \
 -D BUILD_EXAMPLES=OFF \
 -D BUILD_TESTS=OFF \
 -D OPENCV_GENERATE_PKGCONFIG=YES \
@@ -43,11 +43,7 @@ RUN cd opencv-${OPENCV_VERSION}; mkdir build; cd build; cmake -D CMAKE_BUILD_TYP
 RUN cd opencv-${OPENCV_VERSION}/build; make -j$(nproc); make install; rm -rf /tmp/opencv-${OPENCV_VERSION}
 
 # MXNet deps
-RUN apt install -y libopenblas-dev liblapack-dev gfortran
-
-# Symlink Intel MKL env to trick MXNet
-RUN mkdir -p /opt/intel/mkl/lib
-RUN ln -s /opt/miniconda3/envs/intelmkl/lib /opt/intel/mkl/lib/intel64
+RUN apt install -y liblapack-dev gfortran
 
 # Build MXNet
 COPY config.mk mxnet-${MXNET_VERSION}/.
@@ -55,13 +51,15 @@ RUN cd mxnet-${MXNET_VERSION} && make -j$(nproc)
 
 SHELL ["/bin/bash", "-c"]
 
-# Install runtime dependencies
-RUN /opt/miniconda3/bin/conda create -n intelmkl-dnn mkl-dnn
+# MKLDNN post-install
+RUN cp mxnet-${MXNET_VERSION}/3rdparty/mkldnn/build/install/lib/libmkldnn.so* /usr/local/lib/.
+RUN cp mxnet-${MXNET_VERSION}/3rdparty/mkldnn/build/install/lib/libmklml_intel.so* /usr/local/lib/.
+
 # Prepare env variables for all users
 # Docker interactive mode
-ENV LD_LIBRARY_PATH /opt/miniconda3/envs/intelmkl-dnn/lib:${LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH /usr/local/lib:${LD_LIBRARY_PATH}
 # For interactive login session
-RUN echo "LD_LIBRARY_PATH=/opt/miniconda3/envs/intelmkl-dnn/lib:${LD_LIBRARY_PATH}" >> /etc/environment
+RUN echo "LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH}" >> /etc/environment
 
 # Install MXNet
 RUN source /opt/miniconda3/bin/activate intelpython3; \

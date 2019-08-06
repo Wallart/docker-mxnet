@@ -49,7 +49,7 @@ ADD_CFLAGS += -I/usr/local/cuda/targets/x86_64-linux/include -ffunction-sections
 # choose the version of blas you want to use
 # can be: mkl, blas, atlas, openblas
 # in default use atlas for linux while apple for osx
-USE_BLAS=openblas
+USE_BLAS=mkl
 
 # whether use opencv during compilation
 # you can disable it, however, you will not able to use
