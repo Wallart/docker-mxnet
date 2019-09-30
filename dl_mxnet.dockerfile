@@ -4,7 +4,7 @@ LABEL Author='Julien WALLART'
 
 WORKDIR /tmp
 
-ENV MXNET_VERSION 1.5.0
+ENV MXNET_VERSION 1.5.1
 ENV OPENCV_VERSION 4.1.1
 
 # Download frameworks
@@ -13,7 +13,7 @@ RUN wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.tar.gz; mv $
 RUN tar xf opencv-${OPENCV_VERSION}.tar.gz; rm -rf opencv-${OPENCV_VERSION}.tar.gz
 
 # OpenCV deps
-RUN apt update && apt install -y cmake ccache qtdeclarative5-dev libturbojpeg-dev libpng-dev libtiff-dev pkg-config
+RUN apt update && export DEBIAN_FRONTEND=noninteractive; apt install -y cmake ccache qtdeclarative5-dev libturbojpeg-dev libpng-dev libtiff-dev pkg-config
 
 # Build OpenCV
 RUN cd opencv-${OPENCV_VERSION}; mkdir build; cd build; cmake -D CMAKE_BUILD_TYPE=RELEASE \
