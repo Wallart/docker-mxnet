@@ -4,7 +4,7 @@ LABEL Author='Julien WALLART'
 
 WORKDIR /tmp
 
-ENV MXNET_VERSION 1.5.1
+ENV MXNET_VERSION 1.6.0.rc0
 ENV OPENCV_VERSION 4.1.1
 
 # Download frameworks
@@ -53,7 +53,6 @@ SHELL ["/bin/bash", "-c"]
 
 # MKLDNN post-install
 RUN cp mxnet-${MXNET_VERSION}/3rdparty/mkldnn/build/install/lib/libmkldnn.so* /usr/local/lib/.
-RUN cp mxnet-${MXNET_VERSION}/3rdparty/mkldnn/build/install/lib/libmklml_intel.so* /usr/local/lib/.
 
 # Prepare env variables for all users
 # Docker interactive mode
