@@ -3,6 +3,7 @@ FROM wallart/dl_base:${BASE_VERSION}
 LABEL Author 'Julien WALLART'
 
 WORKDIR /tmp
+ENV DEBIAN_FRONTEND noninteractive
 
 # Add CUDA repository
 RUN apt-get update && apt-get install -y --no-install-recommends gnupg2 curl ca-certificates && \
@@ -13,50 +14,52 @@ RUN apt-get update && apt-get install -y --no-install-recommends gnupg2 curl ca-
     rm -rf /var/lib/apt/lists/*
 
 # Install CUDA
-ENV CUDA_VERSION 10.1.168
-ENV CUDA_PKG_VERSION 10-1=$CUDA_VERSION-1
+ENV CUDA_VERSION 10.2.89
+ENV CUDA_PKG_VERSION 10-2=$CUDA_VERSION-1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-cudart-$CUDA_PKG_VERSION \
-        cuda-compat-10-1 && \
-    ln -s cuda-10.1 /usr/local/cuda && \
+        cuda-compat-10-2 && \
+    ln -s cuda-10.2 /usr/local/cuda && \
     rm -rf /var/lib/apt/lists/*
 
 # Install NCCL and CUDA libs
-ENV NCCL_VERSION 2.4.2
+ENV NCCL_VERSION 2.5.6
 # Runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-libraries-$CUDA_PKG_VERSION \
         cuda-nvtx-$CUDA_PKG_VERSION \
-        libnccl2=$NCCL_VERSION-1+cuda10.1 && \
+        libcublas10=10.2.2.89-1 \
+        libnccl2=$NCCL_VERSION-1+cuda10.2 && \
     apt-mark hold libnccl2 && \
     rm -rf /var/lib/apt/lists/*
 # Devel
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        cuda-libraries-dev-$CUDA_PKG_VERSION \
         cuda-nvml-dev-$CUDA_PKG_VERSION \
-        cuda-minimal-build-$CUDA_PKG_VERSION \
         cuda-command-line-tools-$CUDA_PKG_VERSION \
-        libnccl-dev=$NCCL_VERSION-1+cuda10.1 && \
+        cuda-libraries-dev-$CUDA_PKG_VERSION \
+        cuda-minimal-build-$CUDA_PKG_VERSION \
+        libnccl-dev=$NCCL_VERSION-1+cuda10.2 \
+        libcublas-dev=10.2.2.89-1 && \
     rm -rf /var/lib/apt/lists/*
 
 # Install CUDNN
-ENV CUDNN_VERSION 7.5.1.10
+ENV CUDNN_VERSION 7.6.5.32
 # Runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
-            libcudnn7=$CUDNN_VERSION-1+cuda10.1 \
-            libcudnn7-dev=$CUDNN_VERSION-1+cuda10.1 && \
+            libcudnn7=$CUDNN_VERSION-1+cuda10.2 \
+            libcudnn7-dev=$CUDNN_VERSION-1+cuda10.2 && \
     apt-mark hold libcudnn7 && \
     rm -rf /var/lib/apt/lists/*
 # Devel
 RUN apt-get update && apt-get install -y --no-install-recommends \
-            libcudnn7=$CUDNN_VERSION-1+cuda10.1 \
-            libcudnn7-dev=$CUDNN_VERSION-1+cuda10.1 && \
+            libcudnn7=$CUDNN_VERSION-1+cuda10.2 \
+            libcudnn7-dev=$CUDNN_VERSION-1+cuda10.2 && \
     apt-mark hold libcudnn7 && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Intel MKL
-ENV MKL_VERSION 2019.4-070
+ENV MKL_VERSION 2020.0-088
 RUN wget -qO - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add - && \
     wget https://apt.repos.intel.com/setup/intelproducts.list -O /etc/apt/sources.list.d/intelproducts.list && \
     apt update && apt install -y intel-mkl-$MKL_VERSION
