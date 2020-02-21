@@ -54,13 +54,13 @@ DEV = 0
 DEBUG = 0
 
 # whether to turn on segfault signal handler to log the stack trace
-USE_SIGNAL_HANDLER = 1
+USE_SIGNAL_HANDLER =
 
 # the additional link flags you want to add
-ADD_LDFLAGS += -L/usr/local/cuda/targets/x86_64-linux/lib /usr/local/cuda/targets/x86_64-linux/lib/libculibos.a -lpng -ltiff -ljpeg -lz -ldl -lgfortran -Wl,--version-script=$(CURDIR)/make/config/libmxnet.ver,-rpath,'$${ORIGIN}',--gc-sections
+ADD_LDFLAGS =
 
 # the additional compile flags you want to add
-ADD_CFLAGS += -I/usr/local/cuda/targets/x86_64-linux/include -ffunction-sections -fdata-sections
+ADD_CFLAGS =
 
 # whether to build operators written in TVM
 USE_TVM_OP = 0
