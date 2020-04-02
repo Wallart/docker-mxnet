@@ -16,7 +16,8 @@ RUN tar xf opencv-${OPENCV_VERSION}.tar.gz; rm -rf opencv-${OPENCV_VERSION}.tar.
 RUN apt update && export DEBIAN_FRONTEND=noninteractive; apt install -y cmake ccache qtdeclarative5-dev libturbojpeg-dev libpng-dev libtiff-dev pkg-config
 
 # Build OpenCV
-RUN cd opencv-${OPENCV_VERSION}; mkdir build; cd build; cmake -D CMAKE_BUILD_TYPE=RELEASE \
+RUN PYTHON_VERSION=$(/opt/miniconda3/envs/intelpython3/bin/python -c 'import platform; print(platform.python_version()[:-2])'); \
+cd opencv-${OPENCV_VERSION}; mkdir build; cd build; cmake -D CMAKE_BUILD_TYPE=RELEASE \
 -D CMAKE_INSTALL_PREFIX=/usr/local \
 -D ENABLE_FAST_MATH=ON \
 -D FORCE_VTK=OFF \
@@ -36,8 +37,8 @@ RUN cd opencv-${OPENCV_VERSION}; mkdir build; cd build; cmake -D CMAKE_BUILD_TYP
 -D BUILD_opencv_python2=OFF \
 -D BUILD_opencv_python3=ON \
 -D PYTHON3_EXECUTABLE=/opt/miniconda3/envs/intelpython3/bin/python \
--D PYTHON3_PACKAGES_PATH=/opt/miniconda3/envs/intelpython3/lib/python3.6/site-packages \
--D PYTHON3_LIBRARY=/opt/miniconda3/envs/intelpython3/lib/libpython3.6m.so \
+-D PYTHON3_PACKAGES_PATH=/opt/miniconda3/envs/intelpython3/lib/python${PYTHON_VERSION}/site-packages \
+-D PYTHON3_LIBRARY=/opt/miniconda3/envs/intelpython3/lib/libpython${PYTHON_VERSION}m.so \
 -D PYTHON_DEFAULT_EXECUTABLE=/opt/miniconda3/envs/intelpython3/bin/python ..
 
 RUN cd opencv-${OPENCV_VERSION}/build; make -j$(nproc); make install; rm -rf /tmp/opencv-${OPENCV_VERSION}
