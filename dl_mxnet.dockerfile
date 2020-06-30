@@ -12,8 +12,13 @@ RUN git clone --recursive -b ${MXNET_VERSION} https://github.com/apache/incubato
 RUN wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.tar.gz; mv ${OPENCV_VERSION}.tar.gz opencv-${OPENCV_VERSION}.tar.gz
 RUN tar xf opencv-${OPENCV_VERSION}.tar.gz; rm -rf opencv-${OPENCV_VERSION}.tar.gz
 
-# OpenCV deps
-RUN apt update && export DEBIAN_FRONTEND=noninteractive; apt install -y cmake ccache qtdeclarative5-dev libturbojpeg-dev libpng-dev libtiff-dev pkg-config
+RUN apt update && export DEBIAN_FRONTEND=noninteractive; apt install -y cmake ccache qtdeclarative5-dev pkg-config rsync
+# image processing deps
+RUN apt install -y libturbojpeg-dev libpng-dev libtiff-dev
+# video processing deps
+RUN apt install -y libavcodec-dev libavformat-dev libswscale-dev libavresample-dev libv4l-dev libx265-dev
+# sound processing deps
+RUN apt install -y libsndfile1 libasound2-dev
 
 # Build OpenCV
 RUN PYTHON_VERSION=$(/opt/miniconda3/envs/intelpython3/bin/python -c 'import platform; print(platform.python_version()[:-2])'); \
@@ -23,6 +28,7 @@ cd opencv-${OPENCV_VERSION}; mkdir build; cd build; cmake -D CMAKE_BUILD_TYPE=RE
 -D FORCE_VTK=OFF \
 -D WITH_TBB=ON \
 -D WITH_V4L=ON \
+-D WITH_FFMPEG=ON \
 -D WITH_QT=ON \
 -D WITH_OPENGL=ON \
 -D WITH_GDAL=OFF \
