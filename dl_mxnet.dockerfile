@@ -4,13 +4,16 @@ LABEL Author='Julien WALLART'
 
 WORKDIR /tmp
 
-ENV MXNET_VERSION 1.6.0
-ENV OPENCV_VERSION 4.1.1
+ENV MXNET_VERSION 1.7.0.rc1
+ENV OPENCV_VERSION 4.3.0
 
 # Download frameworks
 RUN git clone --recursive -b ${MXNET_VERSION} https://github.com/apache/incubator-mxnet mxnet-${MXNET_VERSION}
 RUN wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.tar.gz; mv ${OPENCV_VERSION}.tar.gz opencv-${OPENCV_VERSION}.tar.gz
+RUN wget https://github.com/opencv/opencv_contrib/archive/${OPENCV_VERSION}.tar.gz; mv ${OPENCV_VERSION}.tar.gz opencv_contrib-${OPENCV_VERSION}.tar.gz
+
 RUN tar xf opencv-${OPENCV_VERSION}.tar.gz; rm -rf opencv-${OPENCV_VERSION}.tar.gz
+RUN tar xf opencv_contrib-${OPENCV_VERSION}.tar.gz; rm -rf opencv_contrib-${OPENCV_VERSION}.tar.gz
 
 RUN apt update && export DEBIAN_FRONTEND=noninteractive; apt install -y cmake ccache qtdeclarative5-dev pkg-config rsync
 # image processing deps
@@ -23,9 +26,13 @@ RUN apt install -y libsndfile1 libasound2-dev
 # Build OpenCV
 RUN PYTHON_VERSION=$(/opt/miniconda3/envs/intelpython3/bin/python -c 'import platform; print(platform.python_version()[:-2])'); \
 cd opencv-${OPENCV_VERSION}; mkdir build; cd build; cmake -D CMAKE_BUILD_TYPE=RELEASE \
+-D OPENCV_EXTRA_MODULES_PATH=/tmp/opencv_contrib-${OPENCV_VERSION}/modules \
+-D CMAKE_LIBRARY_PATH=/usr/local/cuda/lib64/stubs \
 -D CMAKE_INSTALL_PREFIX=/usr/local \
 -D ENABLE_FAST_MATH=ON \
+-D CUDA_FAST_MATH=1 \
 -D FORCE_VTK=OFF \
+-D WITH_CUDA=ON \
 -D WITH_TBB=ON \
 -D WITH_V4L=ON \
 -D WITH_FFMPEG=ON \
@@ -59,7 +66,7 @@ RUN cd mxnet-${MXNET_VERSION} && make -j$(nproc)
 SHELL ["/bin/bash", "-c"]
 
 # MKLDNN post-install
-RUN cp mxnet-${MXNET_VERSION}/3rdparty/mkldnn/build/install/lib/libmkldnn.so* /usr/local/lib/.
+RUN cp mxnet-${MXNET_VERSION}/3rdparty/mkldnn/build/install/lib/libmkldnn.* /usr/local/lib/.
 
 # Prepare env variables for all users
 # Docker interactive mode
