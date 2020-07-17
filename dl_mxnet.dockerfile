@@ -16,7 +16,9 @@ RUN tar xf opencv-${OPENCV_VERSION}.tar.gz; rm -rf opencv-${OPENCV_VERSION}.tar.
 RUN wget https://github.com/opencv/opencv_contrib/archive/${OPENCV_VERSION}.tar.gz; mv ${OPENCV_VERSION}.tar.gz opencv_contrib-${OPENCV_VERSION}.tar.gz
 RUN tar xf opencv_contrib-${OPENCV_VERSION}.tar.gz; rm -rf opencv_contrib-${OPENCV_VERSION}.tar.gz
 # FFMpeg + CUDA Codec
-RUN git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
+# Latest version before CUDA 11
+ENV NV_CODEC_VERSION n9.1.23.1
+RUN git clone -b ${NV_CODEC_VERSION} https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
 RUN git clone https://git.ffmpeg.org/ffmpeg.git
 
 RUN apt update && export DEBIAN_FRONTEND=noninteractive; apt install -y cmake ccache qtdeclarative5-dev pkg-config rsync
