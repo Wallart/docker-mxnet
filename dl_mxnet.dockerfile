@@ -8,20 +8,30 @@ ENV MXNET_VERSION 1.7.0.rc1
 ENV OPENCV_VERSION 4.3.0
 
 # Download frameworks
+# MXNet
 RUN git clone --recursive -b ${MXNET_VERSION} https://github.com/apache/incubator-mxnet mxnet-${MXNET_VERSION}
+# OpenCV
 RUN wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.tar.gz; mv ${OPENCV_VERSION}.tar.gz opencv-${OPENCV_VERSION}.tar.gz
-RUN wget https://github.com/opencv/opencv_contrib/archive/${OPENCV_VERSION}.tar.gz; mv ${OPENCV_VERSION}.tar.gz opencv_contrib-${OPENCV_VERSION}.tar.gz
-
 RUN tar xf opencv-${OPENCV_VERSION}.tar.gz; rm -rf opencv-${OPENCV_VERSION}.tar.gz
+RUN wget https://github.com/opencv/opencv_contrib/archive/${OPENCV_VERSION}.tar.gz; mv ${OPENCV_VERSION}.tar.gz opencv_contrib-${OPENCV_VERSION}.tar.gz
 RUN tar xf opencv_contrib-${OPENCV_VERSION}.tar.gz; rm -rf opencv_contrib-${OPENCV_VERSION}.tar.gz
+# FFMpeg + CUDA Codec
+RUN git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
+RUN git clone https://git.ffmpeg.org/ffmpeg.git
 
 RUN apt update && export DEBIAN_FRONTEND=noninteractive; apt install -y cmake ccache qtdeclarative5-dev pkg-config rsync
 # image processing deps
 RUN apt install -y libturbojpeg-dev libpng-dev libtiff-dev
 # video processing deps
-RUN apt install -y libavcodec-dev libavformat-dev libswscale-dev libavresample-dev libv4l-dev libx265-dev
+#RUN apt install -y libavcodec-dev libavformat-dev libswscale-dev libavresample-dev libv4l-dev libx265-dev
+RUN apt install -y yasm
 # sound processing deps
 RUN apt install -y libsndfile1 libasound2-dev
+
+RUN cd nv-codec-headers; make install
+RUN cd ffmpeg; ./configure --enable-shared --enable-cuda-nvcc --enable-cuvid --enable-nvenc --enable-nonfree \
+    --enable-libnpp --extra-cflags=-I/usr/local/cuda/include --extra-ldflags=-L/usr/local/cuda/lib64 && \
+    make -j$(nproc) && make install
 
 # Build OpenCV
 RUN PYTHON_VERSION=$(/opt/miniconda3/envs/intelpython3/bin/python -c 'import platform; print(platform.python_version()[:-2])'); \
@@ -30,11 +40,11 @@ cd opencv-${OPENCV_VERSION}; mkdir build; cd build; cmake -D CMAKE_BUILD_TYPE=RE
 -D CMAKE_LIBRARY_PATH=/usr/local/cuda/lib64/stubs \
 -D CMAKE_INSTALL_PREFIX=/usr/local \
 -D ENABLE_FAST_MATH=ON \
--D CUDA_FAST_MATH=1 \
+-D CUDA_FAST_MATH=ON \
 -D FORCE_VTK=OFF \
 -D WITH_CUDA=ON \
 -D WITH_TBB=ON \
--D WITH_V4L=ON \
+-D WITH_V4L=OFF \
 -D WITH_FFMPEG=ON \
 -D WITH_QT=ON \
 -D WITH_OPENGL=ON \
