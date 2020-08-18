@@ -57,6 +57,7 @@ cd opencv-${OPENCV_VERSION}; mkdir build; cd build; cmake -D CMAKE_BUILD_TYPE=RE
 -D BUILD_EXAMPLES=OFF \
 -D BUILD_TESTS=OFF \
 -D OPENCV_GENERATE_PKGCONFIG=YES \
+-D OPENCV_ENABLE_NONFREE=YES \
 -D BUILD_opencv_dnn=OFF \
 -D BUILD_opencv_legacy=OFF \
 -D BUILD_opencv_python2=OFF \
@@ -93,8 +94,7 @@ RUN source /opt/miniconda3/bin/activate intelpython3; \
     cd mxnet-${MXNET_VERSION}/python; \
     python setup.py install 2>&1 > /tmp/intelpython3-mxnet.log || echo 'Cannot downgrade numpy'
 
-RUN source /opt/miniconda3/bin/activate intelpython3; \
-    pip install mxboard tensorflow matplotlib pandas pillow
+RUN source /opt/miniconda3/bin/activate intelpython3; pip install --no-deps mxboard tensorflow matplotlib pandas pillow
 
 # Runit startup
 COPY bootstrap.sh /usr/sbin/bootstrap
