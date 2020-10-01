@@ -7,6 +7,8 @@ LABEL Author='Julien WALLART'
 
 # Install mandatory packages for system configuration
 RUN apt update && apt install -y passwd openssh-server make gcc g++ unzip net-tools dnsutils iproute2 openssh-client git wget python-pip vim
+# Other useful tools
+RUN apt install -y rsync htop tmux nano
 
 # Configure sshd
 RUN ssh-keygen -A
