@@ -95,7 +95,7 @@ RUN source /opt/miniconda3/bin/activate intelpython3; \
     python setup.py install 2>&1 > /tmp/intelpython3-mxnet.log || echo 'Cannot downgrade numpy'
 
 RUN source /opt/miniconda3/bin/activate intelpython3; \
-    pip install --no-deps mxboard tensorflow matplotlib pandas pillow tqdm
+    pip install --ignore-installed mxboard tensorflow matplotlib pandas pillow tqdm
 
 # Runit startup
 COPY bootstrap.sh /usr/sbin/bootstrap
