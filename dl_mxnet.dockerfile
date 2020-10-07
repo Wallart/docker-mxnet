@@ -4,8 +4,8 @@ LABEL Author='Julien WALLART'
 
 WORKDIR /tmp
 
-ENV MXNET_VERSION 1.7.0
-ENV OPENCV_VERSION 4.3.0
+ENV MXNET_VERSION 1.8.0.rc1
+ENV OPENCV_VERSION 4.4.0
 
 # Download frameworks
 # MXNet
@@ -36,15 +36,16 @@ RUN apt install -y libsndfile1 libasound2-dev
 #    make -j$(nproc) && make install
 
 # Build OpenCV
+# re-enable CUDA when OpenCV comes with CUDA 11 support
 RUN PYTHON_VERSION=$(/opt/miniconda3/envs/intelpython3/bin/python -c 'import platform; print(platform.python_version()[:-2])'); \
 cd opencv-${OPENCV_VERSION}; mkdir build; cd build; cmake -D CMAKE_BUILD_TYPE=RELEASE \
 -D OPENCV_EXTRA_MODULES_PATH=/tmp/opencv_contrib-${OPENCV_VERSION}/modules \
 -D CMAKE_LIBRARY_PATH=/usr/local/cuda/lib64/stubs \
 -D CMAKE_INSTALL_PREFIX=/usr/local \
 -D ENABLE_FAST_MATH=ON \
--D CUDA_FAST_MATH=ON \
+-D CUDA_FAST_MATH=OFF \
 -D FORCE_VTK=OFF \
--D WITH_CUDA=ON \
+-D WITH_CUDA=OFF \
 -D WITH_TBB=ON \
 -D WITH_V4L=ON \
 -D WITH_FFMPEG=ON \

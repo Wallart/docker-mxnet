@@ -3,7 +3,6 @@ FROM wallart/dl_base:${BASE_VERSION}
 LABEL Author 'Julien WALLART'
 
 WORKDIR /tmp
-ENV DEBIAN_FRONTEND noninteractive
 
 # Add CUDA repository
 RUN apt-get update && apt-get install -y --no-install-recommends gnupg2 curl ca-certificates && \
@@ -14,48 +13,48 @@ RUN apt-get update && apt-get install -y --no-install-recommends gnupg2 curl ca-
     rm -rf /var/lib/apt/lists/*
 
 # Install CUDA
-ENV CUDA_VERSION 10.2.89
-ENV CUDA_PKG_VERSION 10-2=$CUDA_VERSION-1
+ENV CUDA_VERSION 11.1.0
+#ENV CUDA_PKG_VERSION 11.1.74-1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        cuda-cudart-$CUDA_PKG_VERSION \
-        cuda-compat-10-2 && \
-    ln -s cuda-10.2 /usr/local/cuda && \
+        cuda-cudart-11-1=11.1.74-1 \
+        cuda-compat-11-1 && \
+    ln -s cuda-11.1 /usr/local/cuda && \
     rm -rf /var/lib/apt/lists/*
 
 # Install NCCL and CUDA libs
-ENV NCCL_VERSION 2.5.6
+ENV NCCL_VERSION 2.7.8
 # Runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        cuda-libraries-$CUDA_PKG_VERSION \
-        cuda-nvtx-$CUDA_PKG_VERSION \
-        libcublas10=10.2.2.89-1 \
-        libnccl2=$NCCL_VERSION-1+cuda10.2 && \
+        cuda-libraries-11-1=11.1.0-1 \
+        libnpp-11-1=11.1.1.269-1 \
+        cuda-nvtx-11-1=11.1.74-1 \
+        libcublas-11-1=11.2.1.74-1 \
+        libnccl2=$NCCL_VERSION-1+cuda11.1 && \
     apt-mark hold libnccl2 && \
     rm -rf /var/lib/apt/lists/*
 # Devel
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        cuda-nvml-dev-$CUDA_PKG_VERSION \
-        cuda-command-line-tools-$CUDA_PKG_VERSION \
-        cuda-libraries-dev-$CUDA_PKG_VERSION \
-        cuda-minimal-build-$CUDA_PKG_VERSION \
-        libnccl-dev=$NCCL_VERSION-1+cuda10.2 \
-        libcublas-dev=10.2.2.89-1 && \
+        cuda-nvml-dev-11-1=11.1.74-1 \
+        cuda-command-line-tools-11-1=11.1.0-1 \
+        cuda-nvprof-11-1=11.1.69-1 \
+        libnpp-dev-11-1=11.1.1.269-1 \
+        cuda-libraries-dev-11-1=11.1.0-1 \
+        cuda-minimal-build-11-1=11.1.0-1 \
+        libnccl-dev=2.7.8-1+cuda11.1 \
+        libcublas-dev-11-1=11.2.1.74-1 \
+        libcusparse-11-1=11.2.0.275-1 \
+        libcusparse-dev-11-1=11.2.0.275-1 && \
+    apt-mark hold libnccl-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # Install CUDNN
-ENV CUDNN_VERSION 7.6.5.32
-# Runtime
+ENV CUDNN_VERSION 8.0.4.30
+# Runtime + Devel
 RUN apt-get update && apt-get install -y --no-install-recommends \
-            libcudnn7=$CUDNN_VERSION-1+cuda10.2 \
-            libcudnn7-dev=$CUDNN_VERSION-1+cuda10.2 && \
-    apt-mark hold libcudnn7 && \
-    rm -rf /var/lib/apt/lists/*
-# Devel
-RUN apt-get update && apt-get install -y --no-install-recommends \
-            libcudnn7=$CUDNN_VERSION-1+cuda10.2 \
-            libcudnn7-dev=$CUDNN_VERSION-1+cuda10.2 && \
-    apt-mark hold libcudnn7 && \
+    libcudnn8=$CUDNN_VERSION-1+cuda11.1 \
+    libcudnn8-dev=$CUDNN_VERSION-1+cuda11.1 && \
+    apt-mark hold libcudnn8 && \
     rm -rf /var/lib/apt/lists/*
 
 # Install Intel MKL
