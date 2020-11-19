@@ -4,7 +4,7 @@ LABEL Author='Julien WALLART'
 
 WORKDIR /tmp
 
-ENV MXNET_VERSION 1.8.0.rc1
+ENV MXNET_VERSION 1.8.0.rc2
 ENV OPENCV_VERSION 4.4.0
 
 # Download frameworks
