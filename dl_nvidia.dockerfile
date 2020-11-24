@@ -13,8 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends gnupg2 curl ca-
     rm -rf /var/lib/apt/lists/*
 
 # Install CUDA
-ENV CUDA_VERSION 11.1.0
-#ENV CUDA_PKG_VERSION 11.1.74-1
+ENV CUDA_VERSION 11.1.1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-cudart-11-1=11.1.74-1 \
@@ -26,30 +25,31 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV NCCL_VERSION 2.7.8
 # Runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        cuda-libraries-11-1=11.1.0-1 \
-        libnpp-11-1=11.1.1.269-1 \
+        cuda-libraries-11-1=11.1.1-1 \
+        libnpp-11-1=11.1.2.301-1 \
         cuda-nvtx-11-1=11.1.74-1 \
-        libcublas-11-1=11.2.1.74-1 \
+        libcublas-11-1=11.3.0.106-1 \
         libnccl2=$NCCL_VERSION-1+cuda11.1 && \
     apt-mark hold libnccl2 && \
     rm -rf /var/lib/apt/lists/*
 # Devel
 RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-nvml-dev-11-1=11.1.74-1 \
-        cuda-command-line-tools-11-1=11.1.0-1 \
-        cuda-nvprof-11-1=11.1.69-1 \
-        libnpp-dev-11-1=11.1.1.269-1 \
-        cuda-libraries-dev-11-1=11.1.0-1 \
-        cuda-minimal-build-11-1=11.1.0-1 \
+        cuda-command-line-tools-11-1=11.1.1-1 \
+        cuda-nvprof-11-1=11.1.105-1 \
+        libnpp-dev-11-1=11.1.2.301-1 \
+        cuda-libraries-dev-11-1=11.1.1-1 \
+        cuda-minimal-build-11-1=11.1.1-1 \
         libnccl-dev=2.7.8-1+cuda11.1 \
-        libcublas-dev-11-1=11.2.1.74-1 \
-        libcusparse-11-1=11.2.0.275-1 \
-        libcusparse-dev-11-1=11.2.0.275-1 && \
+        libcublas-dev-11-1=11.3.0.106-1 \
+        libcusparse-11-1=11.3.0.10-1 \
+        libcusparse-dev-11-1=11.3.0.10-1 && \
     apt-mark hold libnccl-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # Install CUDNN
-ENV CUDNN_VERSION 8.0.4.30
+ENV CUDNN_VERSION 8.0.5.39
+#RUN apt-get update && apt-cache show libcudnn8
 # Runtime + Devel
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libcudnn8=$CUDNN_VERSION-1+cuda11.1 \
