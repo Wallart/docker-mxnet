@@ -12,7 +12,7 @@ SHELL ["/bin/bash", "-c"]
 
 # Create a python3 environment
 RUN apt update; \
-    apt install -y python3 python3-pip
+    apt install -y python3 python3-pip python-is-python3
 
 RUN pip install torch==${TORCH_VERSION} torchvision==${TORCH_VISION_VERSION} torchaudio==${TORCH_AUDIO_VERSION} --extra-index-url https://download.pytorch.org/whl/cu116
 RUN pip install tensorboard wandb
