@@ -4,9 +4,9 @@ LABEL Author='Julien WALLART'
 
 WORKDIR /tmp
 
-ENV TORCH_VERSION 1.13.1
-ENV TORCH_VISION_VERSION 0.14.1
-ENV TORCH_AUDIO_VERSION 0.13.1
+ENV TORCH_VERSION 2.0.1
+ENV TORCH_VISION_VERSION 0.15.2
+ENV TORCH_AUDIO_VERSION 2.0.2
 
 SHELL ["/bin/bash", "-c"]
 
@@ -20,7 +20,7 @@ RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 11
 
 #RUN pip install torch==${TORCH_VERSION} torchvision==${TORCH_VISION_VERSION} torchaudio==${TORCH_AUDIO_VERSION} --extra-index-url https://download.pytorch.org/whl/cu117
 # Maybe I should compile PyTorch myself...
-RUN pip install torch==${TORCH_VERSION} --extra-index-url https://download.pytorch.org/whl/cu117
+RUN pip install torch==${TORCH_VERSION} --extra-index-url https://download.pytorch.org/whl/cu118
 RUN pip install tensorboard wandb
 
 # torchvision and torchaudio not yet supported on Python 3.11

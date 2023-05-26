@@ -12,47 +12,48 @@ RUN apt-get update && apt-get install -y --no-install-recommends gnupg2 curl ca-
     rm -rf /var/lib/apt/lists/*
 
 # Install CUDA
-ENV CUDA_VERSION 11.7.1
+ENV CUDA_VERSION 11.8.0
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      cuda-cudart-11-7=11.7.99-1 \
-      cuda-compat-11-7 && \
+      cuda-cudart-11-8=11.8.89-1 \
+      cuda-compat-11-8 && \
     rm -rf /var/lib/apt/lists/*
 
 # Install NCCL and CUDA libs
-ENV NCCL_VERSION 2.13.4-1
+ENV NCCL_VERSION 2.15.5-1
 # Runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        cuda-libraries-11-7=$CUDA_VERSION-1 \
-        libnpp-11-7=11.7.4.75-1 \
-        cuda-nvtx-11-7=11.7.91-1 \
-        libcusparse-11-7=11.7.4.91-1 \
-        libcublas-11-7=11.10.3.66-1 \
-        libnccl2=$NCCL_VERSION+cuda11.7 && \
+        cuda-libraries-11-8=$CUDA_VERSION-1 \
+        libnpp-11-8=11.8.0.86-1 \
+        cuda-nvtx-11-8=11.8.86-1 \
+        libcusparse-11-8=11.7.5.86-1 \
+        libcublas-11-8=11.11.3.6-1 \
+        libnccl2=$NCCL_VERSION+cuda11.8 && \
     rm -rf /var/lib/apt/lists/* && \
-    apt-mark hold libcublas-11-7 libnccl2
+    apt-mark hold libcublas-11-8 libnccl2
+
 
 # Devel
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        cuda-cudart-dev-11-7=11.7.99-1 \
-        cuda-command-line-tools-11-7=$CUDA_VERSION-1 \
-        cuda-minimal-build-11-7=$CUDA_VERSION-1 \
-        cuda-libraries-dev-11-7=$CUDA_VERSION-1 \
-        cuda-nvml-dev-11-7=11.7.91-1 \
-        cuda-nvprof-11-7=11.7.101-1 \
-        libnpp-dev-11-7=11.7.4.75-1 \
-        libcusparse-dev-11-7=11.7.4.91-1 \
-        libcublas-dev-11-7=11.10.3.66-1 \
-        libnccl-dev=2.13.4-1+cuda11.7 && \
+        cuda-cudart-dev-11-8=11.8.89-1 \
+        cuda-command-line-tools-11-8=$CUDA_VERSION-1 \
+        cuda-minimal-build-11-8=$CUDA_VERSION-1 \
+        cuda-libraries-dev-11-8=$CUDA_VERSION-1 \
+        cuda-nvml-dev-11-8=11.8.86-1 \
+        cuda-nvprof-11-8=11.8.87-1 \
+        libnpp-dev-11-8=11.8.0.86-1 \
+        libcusparse-dev-11-8=11.7.5.86-1 \
+        libcublas-dev-11-8=11.11.3.6-1 \
+        libnccl-dev=2.15.5-1+cuda11.8 && \
     rm -rf /var/lib/apt/lists/* && \
-    apt-mark hold libcublas-dev-11-7 libnccl-dev
+    apt-mark hold libcublas-dev-11-8 libnccl-dev
 
 # Install CUDNN
-ENV CUDNN_VERSION 8.5.0.96
+ENV CUDNN_VERSION 8.9.0.131
 #RUN apt-get update && apt-cache show libcudnn8
 # Runtime + Devel
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      libcudnn8=$CUDNN_VERSION-1+cuda11.7 \
-      libcudnn8-dev=$CUDNN_VERSION-1+cuda11.7 && \
+      libcudnn8=$CUDNN_VERSION-1+cuda11.8 \
+      libcudnn8-dev=$CUDNN_VERSION-1+cuda11.8 && \
     apt-mark hold libcudnn8 && \
     rm -rf /var/lib/apt/lists/*
 
